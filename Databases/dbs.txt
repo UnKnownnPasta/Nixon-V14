@@ -1,0 +1,7 @@
+Future addition:
+	- Custom Bot has 3 databases:
+	  1 storing users who own one
+	  2 storing all commands and purchases
+	  3 custom karma system
+
+	- Generic database for afk, minesweeper, etc.
