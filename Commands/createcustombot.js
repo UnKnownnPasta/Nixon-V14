@@ -24,20 +24,20 @@ module.exports = {
 			return await interaction.editReply(`Prefix \`${botPrefix}\` cannot be used as it is already in use.`)
 		}
 
-		console.log(`New bot: ${userName}, ${botPrefix} ${testTrig} = ${testRes} & ${botAvatar} void| ${botOwner.tag} ${botOwner.id} |`)
+		console.log(`(interaction) Recieved input: ${userName}, ${botPrefix} ||| ${testTrig} = ${testRes} ||| ${botAvatar} ||| ${botOwner.tag} ${botOwner.id} |`)
 
 		let nameRegex = /[a-z0-9:/\- ]/gi
 		let avatrRegex = /https?:\/\/.*\.(?:png|jpg)/
-		if(nameRegex.test(userName) === false) return interaction.editReply('The Given User Name failed to Pass Name Check. [Minimum 3 normal characters]')
-		if(avatrRegex.test(botAvatar) === false) return interaction.editReply('The Given User Avatar URL failed to Pass URL Check. [Invalid link format]')
-		if(nameRegex.test(testTrig) === false) return interaction.editReply('The Given Command Name failed to Pass Test Command Name Check. [Minimum 3 normal characters]')
-		if(nameRegex.test(testRes) === false) return interaction.editReply('The Given Command Response failed to Pass Test Command Response Check. [Minimum 3 normal characters]')
+		if(nameRegex.test(userName) === false) return interaction.editReply('Given Username is invalid. [Minimum 3 normal characters]')
+		if(avatrRegex.test(botAvatar) === false) return interaction.editReply('Given Avatar URL is invalid. [Invalid link format]')
+		if(nameRegex.test(testTrig) === false) return interaction.editReply('Given command name is invalid. [Minimum 3 normal characters]')
+		if(nameRegex.test(testRes) === false) return interaction.editReply('Given command response is invalid. [Minimum 3 normal characters]')
 
 		try {
 			const embedE = new EmbedBuilder();
 			embedE.setDescription(`**${botOwner.tag}**, Created Custom Bot.\n**Name:** \`${userName}\`\n**Prefix:** \`${botPrefix}\``)
 			embedE.setThumbnail(botAvatar)
-			embedE.setColor('BLURPLE')
+			embedE.setColor('DarkPurple')
 			embedE.addFields(
 			{ name: 'Default Command', value: testTrig, inline: true },
 			{ name: 'Command Response', value: testRes, inline: true }
@@ -54,7 +54,7 @@ module.exports = {
 				return interaction.editReply(`Database conflict error.`)
 			})
 			CBProfile.create({
-				userID: botOwner.id,
+				user_id: botOwner.id,
 				quoteCmd: 'false',
 				weatherCmd: 'false',
 				bankCmd: 'false',
@@ -66,12 +66,14 @@ module.exports = {
 			}).catch(() => {
 				return interaction.editReply(`Database conflict error.`)
 			})
+			await customBots.sync();
+			console.log('(sequelize) Updated bots DB.')
 			interaction.editReply({ content: `Created bot.`, embeds: [embedE] })
 		} catch (error) {
 			if(error.type === 'SequelizeUniqueConstraintError') {
 				return interaction.editReply(`Database conflict error.`)
 			}
-			console.log(error)
+			console.log('(sequelize) ', error)
 			return interaction.editReply('Failed to create bot.')
 		}
 	},
